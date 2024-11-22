@@ -24,21 +24,13 @@ This module contains parsers for ejudge pages anc (mostly) CLI-app-specific clas
 """
 
 
-CONTEST_ID_BY_GROUP = {}
-CONTEST_ID_BY_GROUP.update({
-    f'19{group}': 130 + group for group in range(1, 12)
-})
-for year in [20, 21]:
-    CONTEST_ID_BY_GROUP.update({
-        f'{year}{group}': int(f'{year}{group}') for group in range(1, 11)
-    })
-CONTEST_ID_BY_GROUP['free'] = 2021
-CONTEST_ID_BY_GROUP.update({
-    f'22{group}': group + 1 for group in range(1, 11)
-})
-CONTEST_ID_BY_GROUP['SPB1'] = 12
-CONTEST_ID_BY_GROUP['SPB2'] = 13
-CONTEST_ID_BY_GROUP['auditor23'] = 14
+CONTEST_ID_BY_GROUP = {
+    f'23{group}': int(f'23{group}') for group in range(1, 12)
+}
+CONTEST_ID_BY_GROUP['SPb-ADAAI'] = 2314
+CONTEST_ID_BY_GROUP['auditor24'] = 2315
+CONTEST_ID_BY_GROUP['SPb-AMI'] = 2316
+
 
 GROUP_ID_BY_CONTEST = {
     contest_id: group_id for group_id, contest_id in CONTEST_ID_BY_GROUP.items()

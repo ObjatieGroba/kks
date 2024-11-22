@@ -1,6 +1,6 @@
 import click
 
-from kks.ejudge import get_contest_id
+from kks.ejudge import get_contest_id, CONTEST_ID_BY_GROUP
 from kks.util.ejudge import AuthData, EjudgeSession
 
 
@@ -35,23 +35,29 @@ def auth(login, password, group_id, contest_id, store_password, judge):
         click.secho("Specify either contest id, or group id, not both", fg='red', err=True)
         return
 
-    if contest_id is None:
-        contest_id = get_contest_id(group_id)
+    if group_id == '*':
+        group_ids = CONTEST_ID_BY_GROUP.keys()
+    else:
+        group_ids = [group_id]
+
+    for group_id in group_ids:
         if contest_id is None:
-            click.secho(
-                f"Invalid group id '{group_id}'"
-                "(should be a number from 221 to 2210, or SPB1/SPB2, or auditor23)",
-                fg='red', err=True
-            )
-            return
+            contest_id = get_contest_id(group_id)
+            if contest_id is None:
+                click.secho(
+                    f"Invalid group id '{group_id}'"
+                    "(should be a number from 221 to 2210, or SPB1/SPB2, or auditor23)",
+                    fg='red', err=True
+                )
+                return
 
-    auth_data = AuthData(login, password, contest_id, judge)
-    # Use new auth data instead of saved
-    session = EjudgeSession(auth_data=auth_data, auth=False)
-    # (re)auth even if there is a saved session state
-    session.auth()
+        auth_data = AuthData(login, password, contest_id, judge)
+        # Use new auth data instead of saved
+        session = EjudgeSession(auth_data=auth_data, auth=False)
+        # (re)auth even if there is a saved session state
+        session.auth()
 
-    auth_data.save_to_config(store_password)
+        auth_data.save_to_config(store_password)
 
-    click.secho('Successfully logged in', fg='green')
-    click.secho('Successfully saved auth data', fg='green', err=True)
+        click.secho(f'Successfully logged in {group_id}', fg='green')
+        click.secho('Successfully saved auth data', fg='green', err=True)
